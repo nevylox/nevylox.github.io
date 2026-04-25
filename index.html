@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nevylox // Nexus</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <title>Nevylox // Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f2ff;
             --accent: #7000ff;
-            --bg: #050505;
+            --glass: rgba(15, 15, 15, 0.7);
         }
 
         body, html {
@@ -17,7 +17,7 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg);
+            background-color: #050505;
             font-family: 'Inter', sans-serif;
             color: #ffffff;
             overflow: hidden;
@@ -26,119 +26,103 @@
             align-items: center;
         }
 
-        /* Animated Starfield Background */
-        #canvas-bg {
-            position: fixed;
+        /* Interactive Particle Canvas */
+        #bg-canvas {
+            position: absolute;
             top: 0;
             left: 0;
-            z-index: 0;
+            z-index: 1;
         }
 
-        /* Glassmorphism Container */
-        .glass-card {
+        /* The Glass Card */
+        .card {
             position: relative;
             z-index: 10;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
             padding: 3rem;
+            border-radius: 2rem;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            max-width: 400px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            max-width: 450px;
             width: 90%;
-            animation: slideUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation: emerge 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        /* Pulsing Logo Wrapper */
-        .logo-wrapper {
+        .logo-container {
             position: relative;
+            margin-bottom: 2rem;
             display: inline-block;
-            margin-bottom: 1.5rem;
         }
 
-        .logo-wrapper::after {
+        .logo-container::before {
             content: '';
             position: absolute;
-            top: -10px; left: -10px; right: -10px; bottom: -10px;
+            inset: -5px;
             border-radius: 50%;
-            border: 2px solid var(--primary);
-            animation: pulse 2s infinite;
-            opacity: 0.5;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            animation: spin 4s linear infinite;
+            z-index: -1;
         }
 
         .logo {
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            z-index: 2;
+            background: #111;
+            padding: 3px;
         }
 
         h1 {
-            font-weight: 700;
             font-size: 3.5rem;
+            font-weight: 700;
             margin: 0;
             letter-spacing: -2px;
-            background: linear-gradient(45deg, #fff 30%, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            cursor: default;
+            cursor: pointer;
+            position: relative;
         }
 
-        /* Glitch Effect on Hover */
+        /* Glitch Effect */
         h1:hover {
-            text-shadow: 2px 0 var(--accent), -2px 0 var(--primary);
-            animation: glitch 0.3s infinite;
+            animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
         }
 
-        .subtitle {
+        .status-box {
+            margin-top: 1.5rem;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-bottom: 2rem;
-            opacity: 0.8;
-        }
-
-        /* System Logs */
-        .console {
+            font-size: 0.75rem;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border-left: 3px solid var(--primary);
             text-align: left;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            color: #666;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 12px;
-            border-left: 2px solid var(--primary);
+            color: #888;
         }
 
-        .line {
+        .terminal-text {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .cursor {
-            display: inline-block;
-            width: 6px;
-            height: 12px;
+            width: 8px;
+            height: 15px;
             background: var(--primary);
-            animation: blink 1s infinite;
+            display: inline-block;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
         }
 
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.5; }
-            100% { transform: scale(1.2); opacity: 0; }
+        @keyframes emerge {
+            from { opacity: 0; transform: translateY(40px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         @keyframes blink {
@@ -146,99 +130,87 @@
         }
 
         @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
+            0% { transform: translate(0); text-shadow: -2px 0 var(--primary), 2px 0 var(--accent); }
+            25% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, -2px); text-shadow: 2px 0 var(--primary), -2px 0 var(--accent); }
+            75% { transform: translate(-2px, -1px); }
             100% { transform: translate(0); }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="canvas-bg"></canvas>
+    <canvas id="bg-canvas"></canvas>
 
-    <div class="glass-card">
-        <div class="logo-wrapper">
-            <img src="https://via.placeholder.com/150" alt="Nevylox Logo" class="logo">
+    <div class="card">
+        <div class="logo-container">
+            <img src="https://media.discordapp.net/attachments/1344031613436035093/1497661455816724611/Screenshot_2026-04-25_211124-removebg-preview.png?ex=69ee556c&is=69ed03ec&hm=71ba665b8cf38977da56c06d9a8bdb5eec17bb3c3267bfb2bfae3944d80a0cb0&=&format=webp&quality=lossless&width=194&height=155" alt="Logo" class="logo">
         </div>
-        
-        <h1>Nevylox</h1>
-        <div class="subtitle">Nexus Protocol</div>
 
-        <div class="console" id="console">
-            <span class="line">> Initializing core...</span>
-            <span class="line">> Uplink established.</span>
-            <span class="line">> System: <span style="color: #00ff88;">Stable</span></span>
-            <span class="line">> Welcome, Admin<span class="cursor"></span></span>
+        <h1>Nevylox</h1>
+        <p style="letter-spacing: 5px; color: var(--primary); font-size: 0.8rem; margin-top: 10px;">CORE ACTIVE</p>
+
+        <div class="status-box">
+            <span class="terminal-text">> SECURE_LINK: ESTABLISHED</span>
+            <span class="terminal-text">> ENCRYPTION: 256-BIT AES</span>
+            <span class="terminal-text">> STATUS: <span style="color: #00ff88;">OPTIMAL</span></span>
+            <span class="terminal-text">> WELCOME_BACK_USER <div class="cursor"></div></span>
         </div>
     </div>
 
     <script>
-        // Particle Background Logic
-        const canvas = document.getElementById('canvas-bg');
+        const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
+        let points = [];
 
-        function resize() {
+        function init() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.alpha = Math.random();
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-            }
-            draw() {
-                ctx.fillStyle = `rgba(0, 242, 255, ${this.alpha})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+            points = [];
+            for(let i = 0; i < 80; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
             }
         }
 
-        for (let i = 0; i < 100; i++) particles.push(new Particle());
-
-        function animate() {
+        function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-        animate();
+            ctx.strokeStyle = 'rgba(0, 242, 255, 0.15)';
+            ctx.fillStyle = 'rgba(0, 242, 255, 0.5)';
 
-        // Mouse interaction for background
-        window.addEventListener('mousemove', (e) => {
-            particles.forEach(p => {
-                let dx = e.clientX - p.x;
-                let dy = e.clientY - p.y;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < 100) {
-                    p.x -= dx * 0.01;
-                    p.y -= dy * 0.01;
+            points.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
+                ctx.fill();
+
+                for(let j = i + 1; j < points.length; j++) {
+                    let p2 = points[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if(dist < 150) {
+                        ctx.lineWidth = 1 - dist/150;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
                 }
             });
-        });
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        draw();
     </script>
 </body>
 </html>
